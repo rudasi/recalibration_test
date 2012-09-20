@@ -1,0 +1,20 @@
+<package>
+  <description brief="pr2_recalibration_values">
+
+     pr2_recalibration_values
+
+  </description>
+  <author>Rahul Udasi</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_recalibration_values</url>
+  <depend package="pr2_controller_interface"/>
+  <depend package="pr2_mechanism_model"/>
+  <depend package="pluginlib"/>
+  <export>
+    <pr2_controller_interface plugin="${prefix}/controller_plugins.xml" />
+  </export>
+
+</package>
+
+

@@ -1,0 +1,5 @@
+<library path="lib/libpr2_recalibrate_lib">
+  <class name="pr2_recalibration_values/Pr2RecalibrationPlugin" 
+         type="controller::Pr2RecalibrationValues"           
+         base_class_type="pr2_controller_interface::Controller" />
+</library>

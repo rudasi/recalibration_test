@@ -55,9 +55,30 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
         std::string my_actuator_name = robot_->model_->transmissions_[i]->actuator_names_[j];
         ROS_INFO("Actuator name is %s",my_actuator_name.c_str());
         pr2_hardware_interface::Actuator* my_actuator = robot_->model_->getActuator(my_actuator_name);
+
+	pr2_mechanism_model::JointState* temp_joint = new pr2_mechanism_model::JointState;
+	pr2_hardware_interface::Actuator* temp_actuator = new pr2_hardware_interface::Actuator(*my_actuator);
+
+	std::vector<pr2_mechanism_model::JointState*> temp_joint_ptr;
+	temp_joint_ptr.push_back(temp_joint);
+	temp_actuator->state_.position_ = my_actuator->state_.zero_offset_;
+
+	std::vector<pr2_hardware_interface::Actuator*> temp_actuator_ptr;
+	temp_actuator_ptr.push_back(temp_actuator);
+
+	robot_->model_->transmissions_[i]->propagatePosition(temp_actuator_ptr, temp_joint_ptr);
+
         temp.actuator_name.push_back(my_actuator_name); 
-        temp.position.push_back(my_actuator->state_.position_);
-        temp.offset.push_back(my_actuator->state_.zero_offset_); 
+        temp.actuator_position.push_back(my_actuator->state_.position_);
+        temp.actuator_offset.push_back(my_actuator->state_.zero_offset_); 
+	temp.joint_position.push_back(temp_joint_ptr[0]->position_);
+	
+	temp_joint_ptr.erase(temp_joint_ptr.begin());
+	temp_actuator_ptr.erase(temp_actuator_ptr.begin());
+
+	delete temp_joint;
+	delete temp_actuator;
+
      }
      resp.array.push_back(temp); 
   } 

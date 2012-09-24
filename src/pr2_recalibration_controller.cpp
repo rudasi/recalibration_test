@@ -46,7 +46,7 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
   for(int i = 0; i < num_elements; i++)
   {
      std::string my_transmission_name = robot_->model_->transmissions_[i]->name_;
-     if(my_transmission_name.compare("r_gripper_trans") != 0 || my_transmission_name.compare("l_gripper_trans") != 0)
+     if(my_transmission_name.compare("r_gripper_trans") != 0 && my_transmission_name.compare("l_gripper_trans") != 0)
      {
         int num_actuators = robot_->model_->transmissions_[i]->actuator_names_.size();
         ROS_INFO("number of actuators %d", num_actuators);

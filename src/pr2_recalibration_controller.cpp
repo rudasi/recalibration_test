@@ -41,10 +41,10 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 {
   int num_elements = robot_->model_->transmissions_.size();
   ROS_INFO("number of transmissions %d",num_elements);
-  pr2_recalibration_values::values temp;
 
   for(int i = 0; i < num_elements; i++)
   {
+     pr2_recalibration_values::values temp;
      std::string my_transmission_name = robot_->model_->transmissions_[i]->name_;
      if(my_transmission_name.compare("r_gripper_trans") != 0 && my_transmission_name.compare("l_gripper_trans") != 0)
      {

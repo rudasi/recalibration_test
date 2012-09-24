@@ -45,43 +45,48 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 
   for(int i = 0; i < num_elements; i++)
   {
-     int num_actuators = robot_->model_->transmissions_[i]->actuator_names_.size();
-     ROS_INFO("number of actuators %d", num_actuators);
-     
-     std::vector<pr2_mechanism_model::JointState*> temp_joint_ptr;
-     std::vector<pr2_hardware_interface::Actuator*> temp_actuator_ptr;
-     
-     for(int j = 0; j < num_actuators; j++)
+     std::string my_transmission_name = robot_->model_->transmissions_[i]->name_;
+     if(my_transmission_name.find("gripper") == std::string::npos)
      {
-        std::string my_actuator_name = robot_->model_->transmissions_[i]->actuator_names_[j];
-        ROS_INFO("Actuator name is %s",my_actuator_name.c_str());
-        pr2_hardware_interface::Actuator* my_actuator = robot_->model_->getActuator(my_actuator_name);
+        int num_actuators = robot_->model_->transmissions_[i]->actuator_names_.size();
+        ROS_INFO("number of actuators %d", num_actuators);
+        ROS_INFO("transmission name is %s",my_transmission_name.c_str()); 
 
-	pr2_mechanism_model::JointState* temp_joint = new pr2_mechanism_model::JointState;
-	pr2_hardware_interface::Actuator* temp_actuator = new pr2_hardware_interface::Actuator(*my_actuator);
-	temp_joint_ptr.push_back(temp_joint);
+        std::vector<pr2_mechanism_model::JointState*> temp_joint_ptr;
+        std::vector<pr2_hardware_interface::Actuator*> temp_actuator_ptr;
+     
+        for(int j = 0; j < num_actuators; j++)
+        {
+           std::string my_actuator_name = robot_->model_->transmissions_[i]->actuator_names_[j];
+           ROS_INFO("Actuator name is %s",my_actuator_name.c_str());
+           pr2_hardware_interface::Actuator* my_actuator = robot_->model_->getActuator(my_actuator_name);
 
-	temp_actuator->state_.position_ = my_actuator->state_.zero_offset_;
-	temp_actuator_ptr.push_back(temp_actuator);
+	   pr2_mechanism_model::JointState* temp_joint = new pr2_mechanism_model::JointState;
+	   pr2_hardware_interface::Actuator* temp_actuator = new pr2_hardware_interface::Actuator(*my_actuator);
+	   temp_joint_ptr.push_back(temp_joint);
+
+	   temp_actuator->state_.position_ = my_actuator->state_.zero_offset_;
+	   temp_actuator_ptr.push_back(temp_actuator);
 
 
-        temp.actuator_name.push_back(my_actuator_name); 
+           temp.actuator_name.push_back(my_actuator_name); 
 	
-	//temp_joint_ptr.erase(temp_joint_ptr.begin());
-	//temp_actuator_ptr.erase(temp_actuator_ptr.begin());
+	   //temp_joint_ptr.erase(temp_joint_ptr.begin());
+	   //temp_actuator_ptr.erase(temp_actuator_ptr.begin());
 
-	delete temp_joint;
-	delete temp_actuator;
-     }
+	   delete temp_joint;
+	   delete temp_actuator;
+        }
 
-     robot_->model_->transmissions_[i]->propagatePosition(temp_actuator_ptr, temp_joint_ptr);
-     for(int j = 0; j < num_actuators; j++)
-     {
-        temp.actuator_position.push_back(temp_actuator_ptr[j]->state_.position_);
-        temp.actuator_offset.push_back(temp_actuator_ptr[j]->state_.zero_offset_); 
-        temp.joint_position.push_back(temp_joint_ptr[j]->position_);
+        robot_->model_->transmissions_[i]->propagatePosition(temp_actuator_ptr, temp_joint_ptr);
+        for(int j = 0; j < num_actuators; j++)
+        {
+        //   temp.actuator_position.push_back(temp_actuator_ptr[j]->state_.position_);
+        //   temp.actuator_offset.push_back(temp_actuator_ptr[j]->state_.zero_offset_); 
+          temp.joint_position.push_back(temp_joint_ptr[j]->position_);
+        }
+        resp.array.push_back(temp); 
      }
-     resp.array.push_back(temp); 
   } 
   return true;
 }

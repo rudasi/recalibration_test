@@ -41,15 +41,16 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 {
   int num_elements = robot_->model_->transmissions_.size();
   ROS_INFO("number of transmissions %d",num_elements);
+  pr2_recalibration_values::values temp;
 
   for(int i = 0; i < num_elements; i++)
   {
      int num_actuators = robot_->model_->transmissions_[i]->actuator_names_.size();
      ROS_INFO("number of actuators %d", num_actuators);
-     //std::string my_transmission_name = robot_->model_->transmissions_[0]->name_;
-     //ROS_INFO("Transmission name is %s",my_transmission_name.c_str());
-     //resp.array.push_back(robot_->model_->transmissions_[i]->name_); 
-     pr2_recalibration_values::values temp;
+     
+     std::vector<pr2_mechanism_model::JointState*> temp_joint_ptr;
+     std::vector<pr2_hardware_interface::Actuator*> temp_actuator_ptr;
+     
      for(int j = 0; j < num_actuators; j++)
      {
         std::string my_actuator_name = robot_->model_->transmissions_[i]->actuator_names_[j];
@@ -58,28 +59,25 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 
 	pr2_mechanism_model::JointState* temp_joint = new pr2_mechanism_model::JointState;
 	pr2_hardware_interface::Actuator* temp_actuator = new pr2_hardware_interface::Actuator(*my_actuator);
-
-	std::vector<pr2_mechanism_model::JointState*> temp_joint_ptr;
 	temp_joint_ptr.push_back(temp_joint);
-	temp_actuator->state_.position_ = my_actuator->state_.zero_offset_;
 
-	std::vector<pr2_hardware_interface::Actuator*> temp_actuator_ptr;
+	temp_actuator->state_.position_ = my_actuator->state_.zero_offset_;
 	temp_actuator_ptr.push_back(temp_actuator);
 
-	robot_->model_->transmissions_[i]->propagatePosition(temp_actuator_ptr, temp_joint_ptr);
 
         temp.actuator_name.push_back(my_actuator_name); 
-        temp.actuator_position.push_back(my_actuator->state_.position_);
-        temp.actuator_offset.push_back(my_actuator->state_.zero_offset_); 
-	temp.joint_position.push_back(temp_joint_ptr[0]->position_);
 	
-	temp_joint_ptr.erase(temp_joint_ptr.begin());
-	temp_actuator_ptr.erase(temp_actuator_ptr.begin());
+	//temp_joint_ptr.erase(temp_joint_ptr.begin());
+	//temp_actuator_ptr.erase(temp_actuator_ptr.begin());
 
 	delete temp_joint;
 	delete temp_actuator;
-
      }
+
+     robot_->model_->transmissions_[i]->propagatePosition(temp_actuator_ptr, temp_joint_ptr);
+     temp.actuator_position.push_back(my_actuator->state_.position_);
+     temp.actuator_offset.push_back(my_actuator->state_.zero_offset_); 
+     temp.joint_position.push_back(temp_joint_ptr[0]->position_);
      resp.array.push_back(temp); 
   } 
   return true;

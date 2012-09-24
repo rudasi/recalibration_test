@@ -75,9 +75,12 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
      }
 
      robot_->model_->transmissions_[i]->propagatePosition(temp_actuator_ptr, temp_joint_ptr);
-     temp.actuator_position.push_back(my_actuator->state_.position_);
-     temp.actuator_offset.push_back(my_actuator->state_.zero_offset_); 
-     temp.joint_position.push_back(temp_joint_ptr[0]->position_);
+     for(int j = 0; j < num_actuators; j++)
+     {
+        temp.actuator_position.push_back(temp_actuator_ptr[j]->state_.position_);
+        temp.actuator_offset.push_back(temp_actuator_ptr[j]->state_.zero_offset_); 
+        temp.joint_position.push_back(temp_joint_ptr[j]->position_);
+     }
      resp.array.push_back(temp); 
   } 
   return true;

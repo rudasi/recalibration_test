@@ -39,14 +39,14 @@ void Pr2RecalibrationValues::starting()
 
 bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationOffset::Request& req, pr2_recalibration_values::GetCalibrationOffset::Response& resp)
 {
-  if (robot_ ==NULL)
+  if (robot_ == NULL)
   {
     ROS_ERROR("robot is null");
     return false;
   }
   if (robot_->model_ == NULL)
   {
-    ROS_ERROR("robot model is null");
+    ROS_ERROR("robot_->model_ is null");
     return false;
   }
 
@@ -60,13 +60,6 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
     pr2_recalibration_values::values temp_values;
     std::string my_transmission_name = transmission->name_;
     temp_values.transmission_name = my_transmission_name;
-    if( (my_transmission_name.compare("r_gripper_trans") == 0) ||
-	(my_transmission_name.compare("l_gripper_trans") == 0) ||
-	(my_transmission_name.compare("torso_lift_trans") == 0) )
-    {
-      ROS_WARN("Skipping transmision %s", my_transmission_name.c_str());
-      continue;
-    }
 
     ROS_INFO("Transmission name is %s",my_transmission_name.c_str());
 
@@ -94,7 +87,7 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 	temp_values.actuator_name.push_back(my_actuator_name);
       }
     }
-    int num_joints = transmission->actuator_names_.size();
+    int num_joints = transmission->joint_names_.size();
     ROS_INFO(" Number of joints %d", num_joints);
     std::vector<pr2_mechanism_model::JointState*> temp_joint_list;
     for(int j = 0; j < num_joints; j++)

@@ -54,7 +54,7 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 
         std::vector<pr2_mechanism_model::JointState*> temp_joint_ptr;
         std::vector<pr2_hardware_interface::Actuator*> temp_actuator_ptr;
-     
+   
         for(int j = 0; j < num_actuators; j++)
         {
            std::string my_actuator_name = robot_->model_->transmissions_[i]->actuator_names_[j];
@@ -74,8 +74,8 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 	   //temp_joint_ptr.erase(temp_joint_ptr.begin());
 	   //temp_actuator_ptr.erase(temp_actuator_ptr.begin());
 
-	   delete temp_joint;
-	   delete temp_actuator;
+	   //delete temp_joint;
+	   //delete temp_actuator;
         }
 
         robot_->model_->transmissions_[i]->propagatePosition(temp_actuator_ptr, temp_joint_ptr);
@@ -85,6 +85,12 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
            temp.actuator_offset.push_back(temp_actuator_ptr[j]->state_.zero_offset_); 
            temp.joint_position.push_back(temp_joint_ptr[j]->position_);
         }
+
+	for(int j = 0; j < num_actuators; j++)
+	{
+	   delete temp_joint_ptr[j];
+	   delete temp_actuator_ptr[j];
+	}
         resp.array.push_back(temp); 
      }
   } 

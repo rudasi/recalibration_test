@@ -87,6 +87,7 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
 	temp_values.actuator_name.push_back(my_actuator_name);
       }
     }
+
     int num_joints = transmission->joint_names_.size();
     ROS_INFO(" Number of joints %d", num_joints);
     std::vector<pr2_mechanism_model::JointState*> temp_joint_list;

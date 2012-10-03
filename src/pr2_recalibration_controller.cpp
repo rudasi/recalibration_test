@@ -2,6 +2,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <iostream>
 #include "pr2_recalibration_values/values.h"
+#include "ethercat_hardware/MotorTraceSample.h"
 
 PLUGINLIB_DECLARE_CLASS(pr2_recalibration_values, Pr2RecalibrationPlugin, controller::Pr2RecalibrationValues, pr2_controller_interface::Controller)
 
@@ -49,7 +50,6 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
     ROS_ERROR("robot_->model_ is null");
     return false;
   }
-
   int num_transmissions = robot_->model_->transmissions_.size();
   ROS_INFO("number of transmissions %d",num_transmissions);
 
@@ -64,6 +64,10 @@ bool Pr2RecalibrationValues::getOffset(pr2_recalibration_values::GetCalibrationO
     ROS_INFO("Transmission name is %s",my_transmission_name.c_str());
 
     bool ok = true;
+  
+    //ethercat_hardware::MotorTraceSample *temp_sample;
+    //temp_sample = robot_->model_->getMotorData(transmission->actuator_names_[0]);   
+    //ROS_INFO("motordata is %s".temp_sample);
 
     int num_actuators = transmission->actuator_names_.size();
     ROS_INFO(" Number of actuators %d", num_actuators);
